@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("api/v1/vehicle")
 @CrossOrigin("*")
@@ -17,6 +19,12 @@ public class VehicleController {
     public ResponseEntity<VehicleEntity> getVehicleById(@PathVariable Long id) {
         VehicleEntity vehicle = vehicleService.getVehicleById(id);
         return ResponseEntity.ok(vehicle);
+    }
+
+    @GetMapping("/")
+    public ResponseEntity<List<VehicleEntity>> getAllVehicles() {
+        List<VehicleEntity> vehicles = vehicleService.getAllVehicles();
+        return ResponseEntity.ok(vehicles);
     }
 
     @PostMapping("/")

@@ -5,6 +5,8 @@ import fernandoIribarra.lab1TINGESO.repositories.VehicleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class VehicleService {
     @Autowired
@@ -13,6 +15,8 @@ public class VehicleService {
     public VehicleEntity saveVehicle(VehicleEntity vehicle) { return vehicleRepository.save(vehicle);}
 
     public VehicleEntity getVehicleById(Long id) { return vehicleRepository.findById(id).get(); }
+
+    public List<VehicleEntity> getAllVehicles() { return vehicleRepository.findAll(); }
 
     public VehicleEntity updateVehicle(VehicleEntity vehicle) {return vehicleRepository.save(vehicle);}
 

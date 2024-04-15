@@ -17,5 +17,6 @@ public class BonusEntity {
     @Column(unique = true, nullable = false)
     private long id;
     private String brand;
+    private int numberRemaining;
     private long amount;
 }

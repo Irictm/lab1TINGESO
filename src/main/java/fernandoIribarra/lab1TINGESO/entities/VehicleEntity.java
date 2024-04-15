@@ -26,4 +26,5 @@ public class VehicleEntity {
     private Date fabricationDate;
     private String motorType;
     private int numberOfSeats;
+    private long mileage;
 }

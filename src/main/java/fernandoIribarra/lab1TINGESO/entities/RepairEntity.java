@@ -19,8 +19,12 @@ public class RepairEntity {
     @Column(unique = true, nullable = false)
     private long id;
     private Date dateOfAdmission;
-    private String type;
+    private int type;
+    private long currentVehicleMileage;
     private long totalAmount;
     private Date dateOfRelease;
     private Date dateOfPickUp;
+    private long id_vehicle;
+    private long id_receipt;
+    private long id_bonus;
 }

@@ -16,12 +16,5 @@ public class ReceiptEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(unique = true, nullable = false)
     private long id;
-    private long reparationDiscount;
-    private long attentionDayDiscount;
-    private long bonusDiscount;
-
-    private long kilometerRecharge;
-    private long antiquityRecharge;
-    private long delayRecharge;
-
+    private long totalAmount;
 }
