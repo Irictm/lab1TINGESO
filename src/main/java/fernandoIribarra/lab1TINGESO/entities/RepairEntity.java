@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "repairs")
@@ -18,12 +18,12 @@ public class RepairEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(unique = true, nullable = false)
     private long id;
-    private Date dateOfAdmission;
+    private LocalDateTime dateOfAdmission;
     private int type;
     private long currentVehicleMileage;
     private long totalAmount;
-    private Date dateOfRelease;
-    private Date dateOfPickUp;
+    private LocalDateTime dateOfRelease;
+    private LocalDateTime dateOfPickUp;
     private long id_vehicle;
     private long id_receipt;
     private long id_bonus;

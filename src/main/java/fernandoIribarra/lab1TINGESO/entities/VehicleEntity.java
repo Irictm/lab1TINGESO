@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "vehicles")
@@ -23,7 +23,7 @@ public class VehicleEntity {
     private String brand;
     private String model;
     private String type;
-    private Date fabricationDate;
+    private LocalDate fabricationDate;
     private String motorType;
     private int numberOfSeats;
     private long mileage;

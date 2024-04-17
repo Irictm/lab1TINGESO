@@ -6,6 +6,8 @@ import fernandoIribarra.lab1TINGESO.repositories.RepairRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,18 +53,72 @@ public class RepairService {
         long baseCost = baseRepairCosts.get(vehicle.getMotorType()).get(repair.getType());
 
         totalCost += baseCost;
-        totalCost += mileageRecharge(vehicle, baseCost) + antiquityRecharge() + delayRecharge();
+        totalCost += mileageRecharge(vehicle, baseCost) + antiquityRecharge(vehicle, baseCost) + delayRecharge(repair, baseCost);
         totalCost -= repairNumberDiscount() + attentionDayDiscount() + bonusDiscount();
 
         repair.setTotalAmount(totalCost);
         return repair;
     }
 
-    public Long mileageRecharge(VehicleEntity vehicle, long baseCost) { return 0L;}
+    public Long mileageRecharge(VehicleEntity vehicle, long baseCost) {
+        Map<String, List<Double>> mileageCosts = new HashMap<>();
+        mileageCosts.put("Sedan",       List.of(0d, 0.03d, 0.07d, 0.12d, 0.2d));
+        mileageCosts.put("Hatchback",   List.of(0d, 0.03d, 0.07d, 0.12d, 0.2d));
+        mileageCosts.put("SUV",         List.of(0d, 0.05d, 0.09d, 0.12d, 0.2d));
+        mileageCosts.put("Pickup",      List.of(0d, 0.05d, 0.09d, 0.12d, 0.2d));
+        mileageCosts.put("Furgoneta",   List.of(0d, 0.05d, 0.09d, 0.12d, 0.2d));
 
-    public Long antiquityRecharge() { return 0L;}
+        long mileageCost = 0L;
 
-    public Long delayRecharge() { return 0L;}
+        long mileage = vehicle.getMileage();
+        String vehicleType = vehicle.getType();
+
+        if (0L <= mileage && mileage <= 5_000L) {
+            mileageCost = Math.round(mileageCosts.get(vehicleType).get(0) * baseCost);
+        } else if (5_001L <= mileage && mileage <= 12_000L) {
+            mileageCost = Math.round(mileageCosts.get(vehicleType).get(1) * baseCost);
+        } else if (12_001L <= mileage && mileage <= 25_000L) {
+            mileageCost = Math.round(mileageCosts.get(vehicleType).get(2) * baseCost);
+        } else if (25_001L <= mileage && mileage <= 40_000L) {
+            mileageCost = Math.round(mileageCosts.get(vehicleType).get(3) * baseCost);
+        } else if (40_001L <= mileage) {
+            mileageCost = Math.round(mileageCosts.get(vehicleType).get(4) * baseCost);
+        }
+
+        return mileageCost;
+    }
+
+    public Long antiquityRecharge(VehicleEntity vehicle, long baseCost) {
+        Map<String, List<Double>> antiquityCosts = new HashMap<>();
+        antiquityCosts.put("Sedan",       List.of(0d, 0.05d, 0.09d, 0.15d));
+        antiquityCosts.put("Hatchback",   List.of(0d, 0.05d, 0.09d, 0.15d));
+        antiquityCosts.put("SUV",         List.of(0d, 0.07d, 0.11d, 0.2d));
+        antiquityCosts.put("Pickup",      List.of(0d, 0.07d, 0.11d, 0.2d));
+        antiquityCosts.put("Furgoneta",   List.of(0d, 0.07d, 0.11d, 0.2d));
+
+        long antiquityCost = 0L;
+
+        String vehicleType = vehicle.getType();
+        long antiquity = Math.abs(ChronoUnit.YEARS.between(LocalDate.now(), vehicle.getFabricationDate()));
+
+        if (0L <= antiquity && antiquity <= 5L) {
+            antiquityCost = Math.round(antiquityCosts.get(vehicleType).get(0) * baseCost);
+        } else if (6L <= antiquity && antiquity <= 10L) {
+            antiquityCost = Math.round(antiquityCosts.get(vehicleType).get(1) * baseCost);
+        } else if (11L <= antiquity && antiquity <= 15L) {
+            antiquityCost = Math.round(antiquityCosts.get(vehicleType).get(2) * baseCost);
+        } else if (16L <= antiquity) {
+            antiquityCost = Math.round(antiquityCosts.get(vehicleType).get(3) * baseCost);
+        }
+
+        return antiquityCost;
+    }
+
+    public Long delayRecharge(RepairEntity repair, long baseCost) {
+        double rechargePerDay = 0.05d;
+        long delay = Math.abs(ChronoUnit.DAYS.between(repair.getDateOfPickUp(), repair.getDateOfRelease()));
+        return Math.round(delay * rechargePerDay * baseCost);
+    }
 
     public Long repairNumberDiscount() { return 0L;}
 
