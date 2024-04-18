@@ -14,6 +14,8 @@ public class BonusService {
 
     public BonusEntity getBonusById(Long id) { return bonusRepository.findById(id).get(); }
 
+    public BonusEntity getBonusByBrand(String brand) { return bonusRepository.findByBrand(brand); }
+
     public BonusEntity updateBonus(BonusEntity bonus) { return bonusRepository.save(bonus); }
 
     public boolean deleteBonus(Long id) throws Exception {
@@ -23,5 +25,15 @@ public class BonusService {
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
+    }
+    public Long consumeBonus(String brand){
+        long bonusDiscount = 0;
+        BonusEntity bonus = getBonusByBrand(brand);
+        if (bonus.getNumberRemaining() > 0) {
+            bonus.setNumberRemaining(bonus.getNumberRemaining()-1);
+            bonusDiscount = bonus.getAmount();
+            updateBonus(bonus);
+        }
+        return bonusDiscount;
     }
 }

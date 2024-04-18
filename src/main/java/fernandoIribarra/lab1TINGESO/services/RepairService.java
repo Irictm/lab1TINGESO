@@ -1,12 +1,15 @@
 package fernandoIribarra.lab1TINGESO.services;
 
+import fernandoIribarra.lab1TINGESO.entities.BonusEntity;
 import fernandoIribarra.lab1TINGESO.entities.RepairEntity;
 import fernandoIribarra.lab1TINGESO.entities.VehicleEntity;
 import fernandoIribarra.lab1TINGESO.repositories.RepairRepository;
+import org.hibernate.cfg.Environment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.List;
@@ -16,9 +19,10 @@ import java.util.Map;
 public class RepairService {
     @Autowired
     RepairRepository repairRepository;
-
     @Autowired
     VehicleService vehicleService;
+    @Autowired
+    BonusService bonusService;
 
     public RepairEntity saveRepair(RepairEntity repair) { return repairRepository.save(repair);}
 
@@ -54,7 +58,8 @@ public class RepairService {
 
         totalCost += baseCost;
         totalCost += mileageRecharge(vehicle, baseCost) + antiquityRecharge(vehicle, baseCost) + delayRecharge(repair, baseCost);
-        totalCost -= repairNumberDiscount() + attentionDayDiscount() + bonusDiscount();
+        totalCost -= repairNumberDiscount(vehicle, baseCost) + attentionDayDiscount(repair, baseCost) + bonusDiscount(vehicle);
+        totalCost += Math.round(totalCost * Double.parseDouble(System.getenv("IVA")));
 
         repair.setTotalAmount(totalCost);
         return repair;
@@ -120,11 +125,55 @@ public class RepairService {
         return Math.round(delay * rechargePerDay * baseCost);
     }
 
-    public Long repairNumberDiscount() { return 0L;}
+    public Long repairNumberDiscount(VehicleEntity vehicle, long baseCost) {
+        Map<String, List<Double>> antiquityCosts = new HashMap<>();
+        antiquityCosts.put("Gasolina",      List.of(0.05d, 0.1d, 0.15d, 0.2d));
+        antiquityCosts.put("Diesel",        List.of(0.07d, 0.12d, 0.17d, 0.22d));
+        antiquityCosts.put("Hibrido",       List.of(0.1d, 0.15d, 0.2d, 0.25d));
+        antiquityCosts.put("Electrico",     List.of(0.08d, 0.13d, 0.18d, 0.23d));
 
-    public Long attentionDayDiscount() { return 0L;}
+        int recentRepairNumber = 0;
+        List<RepairEntity> vehicleRepairs = repairRepository.findVehicleRepairs(vehicle.getId());
+        for (RepairEntity repair: vehicleRepairs) {
+            long monthsBetween = Math.abs(ChronoUnit.MONTHS.between(repair.getDateOfPickUp(), LocalDateTime.now()));
+            if (monthsBetween <= 12) {
+                recentRepairNumber += 1;
+            }
+        }
 
-    public Long bonusDiscount() { return 0L;}
+        long repairNumberCost = 0;
+        String motorType = vehicle.getMotorType();
+
+        if (0L <= recentRepairNumber && recentRepairNumber <= 2L) {
+            repairNumberCost = Math.round(antiquityCosts.get(motorType).get(0) * baseCost);
+        } else if (3L <= recentRepairNumber && recentRepairNumber <= 5L) {
+            repairNumberCost = Math.round(antiquityCosts.get(motorType).get(1) * baseCost);
+        } else if (6L <= recentRepairNumber && recentRepairNumber <= 9L) {
+            repairNumberCost = Math.round(antiquityCosts.get(motorType).get(2) * baseCost);
+        } else if (10L <= recentRepairNumber) {
+            repairNumberCost = Math.round(antiquityCosts.get(motorType).get(3) * baseCost);
+        }
+
+        return repairNumberCost;
+    }
+
+    public Long attentionDayDiscount(RepairEntity repair, long baseCost) {
+        double attentionDayPonderator = 0.1;
+        long attentionDayCost = 0;
+        LocalDateTime admissionDate = repair.getDateOfAdmission();
+        if (admissionDate.getDayOfWeek().toString().equals("MONDAY") ||
+                admissionDate.getDayOfWeek().toString().equals("THURSDAY")){
+            if (9 <= admissionDate.getHour() && admissionDate.getHour() < 12) {
+                attentionDayCost = Math.round(baseCost * attentionDayPonderator);
+            }
+        }
+        return attentionDayCost;
+    }
+
+    public Long bonusDiscount(VehicleEntity vehicle) {
+        String brand = vehicle.getBrand();
+        return bonusService.consumeBonus(brand);
+    }
 
     public boolean deleteRepair(Long id) throws Exception {
         try {
