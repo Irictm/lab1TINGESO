@@ -1,10 +1,8 @@
 package fernandoIribarra.lab1TINGESO.services;
 
-import fernandoIribarra.lab1TINGESO.entities.BonusEntity;
 import fernandoIribarra.lab1TINGESO.entities.RepairEntity;
 import fernandoIribarra.lab1TINGESO.entities.VehicleEntity;
 import fernandoIribarra.lab1TINGESO.repositories.RepairRepository;
-import org.hibernate.cfg.Environment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +22,10 @@ public class RepairService {
     @Autowired
     BonusService bonusService;
 
-    public RepairEntity saveRepair(RepairEntity repair) { return repairRepository.save(repair);}
+    public RepairEntity saveRepair(RepairEntity repair) {
+        repair = calculateTotalCost(repair);
+        return repairRepository.save(repair);
+    }
 
     public RepairEntity getRepairById(Long id) { return repairRepository.findById(id).get();}
 
@@ -53,6 +54,8 @@ public class RepairService {
                         180_000L,0L,80_000L));
 
         VehicleEntity vehicle = vehicleService.getVehicleById(repair.getId_vehicle());
+
+        if (vehicle == null) { return null; }
 
         long baseCost = baseRepairCosts.get(vehicle.getMotorType()).get(repair.getType());
 

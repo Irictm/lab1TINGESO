@@ -1,6 +1,7 @@
 package fernandoIribarra.lab1TINGESO.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,6 +24,7 @@ public class VehicleEntity {
     private String brand;
     private String model;
     private String type;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")
     private LocalDate fabricationDate;
     private String motorType;
     private int numberOfSeats;
