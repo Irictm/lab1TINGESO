@@ -21,9 +21,10 @@ public class RepairService {
     VehicleService vehicleService;
     @Autowired
     BonusService bonusService;
+    @Autowired
+    OperationService operationService;
 
     public RepairEntity saveRepair(RepairEntity repair) {
-        repair = calculateTotalCost(repair);
         return repairRepository.save(repair);
     }
 
@@ -35,29 +36,14 @@ public class RepairService {
 
     public RepairEntity calculateTotalCost(RepairEntity repair) {
         long totalCost = 0L;
-        Map<String, List<Long>> baseRepairCosts = new HashMap<>();
-        baseRepairCosts.put("Gasolina",
-                List.of(120_000L,130_000L,350_000L,210_000L,
-                        150_000L,100_000L,100_000L,180_000L,
-                        150_000L,130_000L,80_000L));
-        baseRepairCosts.put("Diesel",
-                List.of(120_000L,130_000L,450_000L,210_000L,
-                        150_000L,120_000L,100_000L,180_000L,
-                        150_000L,140_000L,80_000L));
-        baseRepairCosts.put("Hibrido",
-                List.of(180_000L,190_000L,700_000L,300_000L,
-                        200_000L,450_000L,100_000L,210_000L,
-                        180_000L,220_000L,80_000L));
-        baseRepairCosts.put("Electrico",
-                List.of(220_000L,230_000L,800_000L,300_000L,
-                        250_000L,0L,100_000L,250_000L,
-                        180_000L,0L,80_000L));
 
         VehicleEntity vehicle = vehicleService.getVehicleById(repair.getId_vehicle());
+        if (vehicle == null) {
+            System.console().printf("ERROR, Vehiculo asociado a reparacion no existe.");
+            return repair;
+        }
 
-        if (vehicle == null) { return null; }
-
-        long baseCost = baseRepairCosts.get(vehicle.getMotorType()).get(repair.getType());
+        long baseCost = operationService.calculateTotalRepairBaseCost(repair.getId(), vehicle.getMotorType());
 
         totalCost += baseCost;
         totalCost += mileageRecharge(vehicle, baseCost) + antiquityRecharge(vehicle, baseCost) + delayRecharge(repair, baseCost);
@@ -161,13 +147,13 @@ public class RepairService {
     }
 
     public Long attentionDayDiscount(RepairEntity repair, long baseCost) {
-        double attentionDayPonderator = 0.1;
+        double attentionDayPonderer = 0.1;
         long attentionDayCost = 0;
         LocalDateTime admissionDate = repair.getDateOfAdmission();
         if (admissionDate.getDayOfWeek().toString().equals("MONDAY") ||
                 admissionDate.getDayOfWeek().toString().equals("THURSDAY")){
             if (9 <= admissionDate.getHour() && admissionDate.getHour() < 12) {
-                attentionDayCost = Math.round(baseCost * attentionDayPonderator);
+                attentionDayCost = Math.round(baseCost * attentionDayPonderer);
             }
         }
         return attentionDayCost;

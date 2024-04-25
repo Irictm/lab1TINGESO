@@ -27,6 +27,13 @@ public class RepairController {
         return ResponseEntity.ok(repairs);
     }
 
+    @GetMapping("/{id}/calculate")
+    public ResponseEntity<RepairEntity> calculateRepairTotalAmount(@PathVariable Long id) {
+        RepairEntity repair = repairService.getRepairById(id);
+        repair = repairService.calculateTotalCost(repair);
+        return ResponseEntity.ok(repair);
+    }
+
     @PostMapping("/")
     public ResponseEntity<RepairEntity> saveRepair(@RequestBody RepairEntity repair) {
         RepairEntity newRepair = repairService.saveRepair(repair);
