@@ -30,6 +30,9 @@ public class RepairController {
     @GetMapping("/{id}/calculate")
     public ResponseEntity<RepairEntity> calculateRepairTotalAmount(@PathVariable Long id) {
         RepairEntity repair = repairService.getRepairById(id);
+        if (repair.getTotalAmount() > 0L) {
+            return ResponseEntity.ok(repair);
+        }
         repair = repairService.calculateTotalCost(repair);
         return ResponseEntity.ok(repair);
     }

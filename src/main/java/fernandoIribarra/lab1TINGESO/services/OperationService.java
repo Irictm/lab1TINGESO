@@ -40,7 +40,7 @@ public class OperationService {
                 List.of(220_000L,230_000L,800_000L,300_000L,
                         250_000L,0L,100_000L,250_000L,
                         180_000L,0L,80_000L));
-        return baseRepairCosts.get(typeOfMotor).get(operation.getType());
+        return baseRepairCosts.get(typeOfMotor).get(operation.getType()-1);
     }
 
     public long calculateTotalRepairBaseCost(Long id_repair, String typeOfMotor) {

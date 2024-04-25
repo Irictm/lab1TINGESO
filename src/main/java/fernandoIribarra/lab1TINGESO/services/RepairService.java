@@ -39,7 +39,7 @@ public class RepairService {
 
         VehicleEntity vehicle = vehicleService.getVehicleById(repair.getId_vehicle());
         if (vehicle == null) {
-            System.console().printf("ERROR, Vehiculo asociado a reparacion no existe.");
+            System.out.print("ERROR, Vehiculo asociado a reparacion no existe.");
             return repair;
         }
 
@@ -111,7 +111,10 @@ public class RepairService {
     public Long delayRecharge(RepairEntity repair, long baseCost) {
         double rechargePerDay = 0.05d;
         long delay = Math.abs(ChronoUnit.DAYS.between(repair.getDateOfPickUp(), repair.getDateOfRelease()));
-        return Math.round(delay * rechargePerDay * baseCost);
+        long delayCost = Math.round(delay * rechargePerDay * baseCost);
+
+        System.out.printf("delayCost = %d", delayCost);
+        return delayCost;
     }
 
     public Long repairNumberDiscount(VehicleEntity vehicle, long baseCost) {
@@ -156,12 +159,15 @@ public class RepairService {
                 attentionDayCost = Math.round(baseCost * attentionDayPonderer);
             }
         }
+
         return attentionDayCost;
     }
 
     public Long bonusDiscount(VehicleEntity vehicle) {
         String brand = vehicle.getBrand();
-        return bonusService.consumeBonus(brand);
+        long bonusCost = bonusService.consumeBonus(brand);
+
+        return bonusCost;
     }
 
     public boolean deleteRepair(Long id) throws Exception {
