@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,13 +34,13 @@ public class RepairService {
 
     public List<RepairEntity> getAllRepairs() { return repairRepository.findAll(); }
 
+    public List<RepairEntity> getAllRepairsWithOperationType(int typeOp) {
+        return repairRepository.findRepairsWithOperation(typeOp);
+    }
+
     public RepairEntity updateRepair(RepairEntity repair) { return repairRepository.save(repair);}
 
     public RepairEntity calculateTotalCost(RepairEntity repair) {
-        if (repair.getTotalAmount() > 0L) {
-            return repair;
-        }
-
         long totalCost = 0L;
 
         VehicleEntity vehicle = vehicleService.getVehicleById(repair.getId_vehicle());
@@ -52,13 +53,22 @@ public class RepairService {
 
         totalCost += baseCost;
         totalCost += mileageRecharge(vehicle, baseCost) + antiquityRecharge(vehicle, baseCost) + delayRecharge(repair, baseCost);
-        totalCost -= repairNumberDiscount(vehicle, baseCost) + attentionDayDiscount(repair, baseCost) + bonusDiscount(vehicle);
+        totalCost -= repairNumberDiscount(vehicle, baseCost) + attentionDayDiscount(repair, baseCost);
+        if (repair.getTotalAmount() > 0L) {
+            totalCost -= bonusDiscount(vehicle, false);
+        }
+        else {
+            totalCost -= bonusDiscount(vehicle, true);
+        }
         totalCost += Math.round(totalCost * Double.parseDouble(System.getenv("IVA")));
+
+        if (totalCost < 0L){ totalCost = 0L;}
 
         repair.setTotalAmount(totalCost);
         saveRepair(repair);
         return repair;
     }
+
 
     public Long mileageRecharge(VehicleEntity vehicle, long baseCost) {
         Map<String, List<Double>> mileageCosts = new HashMap<>();
@@ -119,7 +129,6 @@ public class RepairService {
         long delay = Math.abs(ChronoUnit.DAYS.between(repair.getDateOfPickUp(), repair.getDateOfRelease()));
         long delayCost = Math.round(delay * rechargePerDay * baseCost);
 
-        System.out.printf("delayCost = %d", delayCost);
         return delayCost;
     }
 
@@ -169,11 +178,24 @@ public class RepairService {
         return attentionDayCost;
     }
 
-    public Long bonusDiscount(VehicleEntity vehicle) {
+    public Long bonusDiscount(VehicleEntity vehicle, boolean consume) {
         String brand = vehicle.getBrand();
-        long bonusCost = bonusService.consumeBonus(brand);
+        long bonusCost = bonusService.consumeBonus(brand, consume);
 
         return bonusCost;
+    }
+
+    public boolean deleteRepairsWithVehicle(Long id_vehicle) throws Exception {
+        try {
+            List<RepairEntity> repairs = repairRepository.findVehicleRepairs(id_vehicle);
+            for (RepairEntity repair: repairs) {
+                deleteRepair(repair.getId());
+                operationService.deleteOperationsWithRepair(repair.getId());
+            }
+            return true;
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
     }
 
     public boolean deleteRepair(Long id) throws Exception {

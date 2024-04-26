@@ -27,6 +27,12 @@ public class VehicleController {
         return ResponseEntity.ok(vehicles);
     }
 
+    @GetMapping("/{id}/values")
+    public ResponseEntity<List<Long>> getFormulaValues(@PathVariable Long id) {
+        List<Long> values = vehicleService.getFormulaValues(id);
+        return ResponseEntity.ok(values);
+    }
+
     @PostMapping("/")
     public ResponseEntity<VehicleEntity> saveVehicle(@RequestBody VehicleEntity vehicle) {
         VehicleEntity newVehicle = vehicleService.saveVehicle(vehicle);

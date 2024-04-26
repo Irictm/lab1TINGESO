@@ -1,6 +1,7 @@
 package fernandoIribarra.lab1TINGESO.controllers;
 
 import fernandoIribarra.lab1TINGESO.entities.RepairEntity;
+import fernandoIribarra.lab1TINGESO.entities.VehicleEntity;
 import fernandoIribarra.lab1TINGESO.services.RepairService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,12 @@ public class RepairController {
     @GetMapping("/")
     public ResponseEntity<List<RepairEntity>> getAllRepairs() {
         List<RepairEntity> repairs = repairService.getAllRepairs();
+        return ResponseEntity.ok(repairs);
+    }
+
+    @GetMapping("/operationtype/{typeOp}")
+    public ResponseEntity<List<RepairEntity>> getAllRepairsWithOpType(@PathVariable int typeOp) {
+        List<RepairEntity> repairs = repairService.getAllRepairsWithOperationType(typeOp);
         return ResponseEntity.ok(repairs);
     }
 

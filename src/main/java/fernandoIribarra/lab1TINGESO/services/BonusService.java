@@ -26,11 +26,14 @@ public class BonusService {
             throw new Exception(e.getMessage());
         }
     }
-    public Long consumeBonus(String brand){
+    public Long consumeBonus(String brand, boolean consume){
         long bonusDiscount = 0;
         BonusEntity bonus = getBonusByBrand(brand);
+        if (bonus == null) {return 0L;}
         if (bonus.getNumberRemaining() > 0) {
-            bonus.setNumberRemaining(bonus.getNumberRemaining()-1);
+            if (consume) {
+                bonus.setNumberRemaining(bonus.getNumberRemaining()-1);
+            }
             bonusDiscount = bonus.getAmount();
             updateBonus(bonus);
         }

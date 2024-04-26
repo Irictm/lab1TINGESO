@@ -12,4 +12,7 @@ import java.util.List;
 public interface OperationRepository extends JpaRepository<OperationEntity, Long> {
     @Query(value="SELECT * FROM operations WHERE id_repair = :id_repair", nativeQuery = true)
     public List<OperationEntity> findOperationsByRepair(@Param("id_repair") Long id_repair);
+
+    @Query(value="DELETE FROM operations WHERE id_repair = :id_repair", nativeQuery = true)
+    public void deleteOperationsByRepair(@Param("id_repair") Long id_repair);
 }

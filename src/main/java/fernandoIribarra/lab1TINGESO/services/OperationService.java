@@ -52,6 +52,15 @@ public class OperationService {
         return totalBaseCost;
     }
 
+    public boolean deleteOperationsWithRepair(Long id_repair) throws Exception {
+        try {
+            operationRepository.deleteOperationsByRepair(id_repair);
+            return true;
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
     public boolean deleteOperation(Long id) throws Exception {
         try {
             operationRepository.deleteById(id);
