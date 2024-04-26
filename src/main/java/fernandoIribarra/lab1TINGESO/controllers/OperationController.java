@@ -6,12 +6,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("api/v1/operation")
 @CrossOrigin("*")
 public class OperationController {
     @Autowired
     OperationService operationService;
+
+    @GetMapping("/repair/{id_repair}")
+    public ResponseEntity<List<OperationEntity>> getOperationsByRepair(@PathVariable Long id_repair) {
+        List<OperationEntity> operations = operationService.getOperationsByRepair(id_repair);
+        return ResponseEntity.ok(operations);
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<OperationEntity> getOperationById(@PathVariable Long id) {
