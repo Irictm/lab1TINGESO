@@ -4,6 +4,7 @@ import fernandoIribarra.lab1TINGESO.entities.RepairEntity;
 import fernandoIribarra.lab1TINGESO.entities.VehicleEntity;
 import fernandoIribarra.lab1TINGESO.repositories.RepairRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -35,6 +36,10 @@ public class RepairService {
     public RepairEntity updateRepair(RepairEntity repair) { return repairRepository.save(repair);}
 
     public RepairEntity calculateTotalCost(RepairEntity repair) {
+        if (repair.getTotalAmount() > 0L) {
+            return repair;
+        }
+
         long totalCost = 0L;
 
         VehicleEntity vehicle = vehicleService.getVehicleById(repair.getId_vehicle());
@@ -51,6 +56,7 @@ public class RepairService {
         totalCost += Math.round(totalCost * Double.parseDouble(System.getenv("IVA")));
 
         repair.setTotalAmount(totalCost);
+        saveRepair(repair);
         return repair;
     }
 
