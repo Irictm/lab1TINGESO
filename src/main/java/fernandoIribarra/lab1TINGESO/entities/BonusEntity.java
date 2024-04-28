@@ -15,9 +15,9 @@ public class BonusEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(unique = true, nullable = false)
-    private long id;
+    private Long id;
     @Column(unique = true, nullable = false)
     private String brand;
     private int numberRemaining;
-    private long amount;
+    private Long amount;
 }

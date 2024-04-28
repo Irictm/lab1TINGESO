@@ -19,7 +19,7 @@ public class VehicleEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(unique = true, nullable = false)
-    private long id;
+    private Long id;
     private String patentNumber;
     private String brand;
     private String model;
@@ -28,5 +28,5 @@ public class VehicleEntity {
     private LocalDate fabricationDate;
     private String motorType;
     private int numberOfSeats;
-    private long mileage;
+    private Long mileage;
 }

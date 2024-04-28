@@ -15,7 +15,7 @@ public class OperationEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(unique = true, nullable = false)
-    private long id;
+    private Long id;
     private int type;
-    private long id_repair;
+    private Long id_repair;
 }
