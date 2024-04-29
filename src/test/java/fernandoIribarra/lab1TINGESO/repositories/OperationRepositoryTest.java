@@ -25,8 +25,8 @@ public class OperationRepositoryTest {
     @Test
     public void whenFindOperationsByRepair_thenReturnOperations() {
         // given
-        OperationEntity operation1 = new OperationEntity(null, 1, 1L);
-        OperationEntity operation2 = new OperationEntity(null, 2, 1L);
+        OperationEntity operation1 = new OperationEntity(null, 3, 1L);
+        OperationEntity operation2 = new OperationEntity(null, 3, 1L);
         entityManager.persist(operation1);
         entityManager.persist(operation2);
         entityManager.flush();
@@ -41,18 +41,20 @@ public class OperationRepositoryTest {
     @Test
     public void whenDeleteOperationsByRepair_thenReturnNull() {
         // given
-        OperationEntity operation1 = new OperationEntity(null, 1, 1L);
-        OperationEntity operation2 = new OperationEntity(null, 2, 1L);
-        entityManager.persist(operation1);
-        entityManager.persist(operation2);
+        OperationEntity operation1 = new OperationEntity(null, 4, 1L);
+        OperationEntity operation2 = new OperationEntity(null, 4, 1L);
+        Long id1 = entityManager.persistAndGetId(operation1, Long.class);
+        Long id2 = entityManager.persistAndGetId(operation2, Long.class);
         entityManager.flush();
 
         // when
         operationRepository.deleteOperationsByRepair(1L);
+        entityManager.flush();
+        entityManager.clear();
 
         // then
-        assertThat(entityManager.find(OperationEntity.class, 1L)).isNull();
-        assertThat(entityManager.find(OperationEntity.class, 2L)).isNull();
+        assertThat(entityManager.find(OperationEntity.class, id1)).isNull();
+        assertThat(entityManager.find(OperationEntity.class, id2)).isNull();
     }
 
 }

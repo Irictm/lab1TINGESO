@@ -1,14 +1,32 @@
 package fernandoIribarra.lab1TINGESO.services;
 
 import fernandoIribarra.lab1TINGESO.entities.VehicleEntity;
+import fernandoIribarra.lab1TINGESO.entities.VehicleEntity;
+import fernandoIribarra.lab1TINGESO.repositories.VehicleRepository;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 public class VehicleServiceTest {
+
+    @Mock
+    private VehicleRepository vehicleRepository;
+
+    @Mock
+    private RepairService repairService;
+
+    @InjectMocks
     VehicleService vehicleService = new VehicleService();
     VehicleEntity vehicle = new VehicleEntity(1L,
             "09-32-LA",
@@ -24,36 +42,39 @@ public class VehicleServiceTest {
     public void whenGetVehicleById_thenVehicle() {
         // Given
         // vehicle entity defined earlier
+        when(vehicleRepository.findById(Mockito.anyLong())).thenReturn(Optional.ofNullable(vehicle));
 
         // When
-        given(vehicleService.getVehicleById(1L)).willReturn(vehicle);
+        VehicleEntity foundVehicle = vehicleService.getVehicleById(vehicle.getId());
 
         // Then
-        assertThat(vehicle.getId()).isEqualTo(1L);
+        assertThat(foundVehicle).isEqualTo(vehicle);
     }
 
     @Test
     public void whenSaveVehicle_thenVehicle() {
         // Given
         // vehicle entity defined earlier
+        when(vehicleRepository.save(Mockito.any(VehicleEntity.class))).thenReturn(vehicle);
 
         // When
-        given(vehicleService.saveVehicle(vehicle)).willReturn(vehicle);
+        VehicleEntity savedVehicle = vehicleService.saveVehicle(vehicle);
 
         // Then
-        assertThat(vehicle.getId()).isEqualTo(1L);
+        assertThat(savedVehicle).isEqualTo(vehicle);
     }
 
     @Test
     public void whenUpdateVehicle_thenVehicle() {
         // Given
         // vehicle entity defined earlier
+        when(vehicleRepository.save(Mockito.any(VehicleEntity.class))).thenReturn(vehicle);
 
         // When
-        given(vehicleService.updateVehicle(vehicle)).willReturn(vehicle);
+        VehicleEntity updatedVehicle = vehicleService.saveVehicle(vehicle);
 
         // Then
-        assertThat(vehicle.getId()).isEqualTo(1L);
+        assertThat(updatedVehicle).isEqualTo(vehicle);
     }
 
     @Test
@@ -62,9 +83,9 @@ public class VehicleServiceTest {
         // vehicle entity defined earlier
 
         // When
-        given(vehicleService.deleteVehicle(vehicle.getId())).willReturn(true);
+        boolean response = vehicleService.deleteVehicle(vehicle.getId());
 
         // Then
-        assertThat(vehicle.getId()).isEqualTo(1L);
+        assertThat(response).isEqualTo(true);
     }
 }

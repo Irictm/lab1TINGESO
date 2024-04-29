@@ -201,6 +201,7 @@ public class RepairService {
     public boolean deleteRepair(Long id) throws Exception {
         try {
             repairRepository.deleteById(id);
+            operationService.deleteOperationsWithRepair(id);
             return true;
         } catch (Exception e) {
             throw new Exception(e.getMessage());

@@ -1,13 +1,26 @@
 package fernandoIribarra.lab1TINGESO.services;
 
 import fernandoIribarra.lab1TINGESO.entities.OperationEntity;
+import fernandoIribarra.lab1TINGESO.repositories.OperationRepository;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 public class OperationServiceTest {
 
+    @Mock
+    private OperationRepository operationRepository;
+
+    @InjectMocks
     OperationService operationService = new OperationService();
     OperationEntity operation = new OperationEntity(1L,
             4,
@@ -17,36 +30,39 @@ public class OperationServiceTest {
     public void whenGetOperationById_thenOperation() {
         // Given
         // operation entity defined earlier
+        when(operationRepository.findById(Mockito.anyLong())).thenReturn(Optional.ofNullable(operation));
 
         // When
-        given(operationService.getOperationById(1L)).willReturn(operation);
+        OperationEntity foundOperation = operationService.getOperationById(operation.getId());
 
         // Then
-        assertThat(operation.getId()).isEqualTo(1L);
+        assertThat(foundOperation).isEqualTo(operation);
     }
 
     @Test
     public void whenSaveOperation_thenOperation() {
         // Given
         // operation entity defined earlier
+        when(operationRepository.save(Mockito.any(OperationEntity.class))).thenReturn(operation);
 
         // When
-        given(operationService.saveOperation(operation)).willReturn(operation);
+        OperationEntity savedOperation = operationService.saveOperation(operation);
 
         // Then
-        assertThat(operation.getId()).isEqualTo(1L);
+        assertThat(savedOperation).isEqualTo(operation);
     }
 
     @Test
     public void whenUpdateOperation_thenOperation() {
         // Given
         // operation entity defined earlier
+        when(operationRepository.save(Mockito.any(OperationEntity.class))).thenReturn(operation);
 
         // When
-        given(operationService.updateOperation(operation)).willReturn(operation);
+        OperationEntity updatedOperation = operationService.saveOperation(operation);
 
         // Then
-        assertThat(operation.getId()).isEqualTo(1L);
+        assertThat(updatedOperation).isEqualTo(operation);
     }
 
     @Test
@@ -55,9 +71,9 @@ public class OperationServiceTest {
         // operation entity defined earlier
 
         // When
-        given(operationService.deleteOperation(operation.getId())).willReturn(true);
+        boolean response = operationService.deleteOperation(operation.getId());
 
         // Then
-        assertThat(operation.getId()).isEqualTo(1L);
+        assertThat(response).isEqualTo(true);
     }
 }
