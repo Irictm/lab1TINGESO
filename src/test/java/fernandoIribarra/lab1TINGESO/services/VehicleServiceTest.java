@@ -11,10 +11,13 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -52,6 +55,47 @@ public class VehicleServiceTest {
     }
 
     @Test
+    public void whenGetAllVehicles_thenVehicles() {
+        // Given
+        // vehicle entity defined earlier
+        VehicleEntity vehicle2 = new VehicleEntity(2L,
+                "18-32-LA",
+                "Ford",
+                "model2",
+                "SUV",
+                LocalDate.now(),
+                "Gasolina",
+                4,
+                4432L);
+        List<VehicleEntity> vehicles = List.of(vehicle, vehicle2);
+        when(vehicleRepository.findAll()).thenReturn(vehicles);
+
+        // When
+        List<VehicleEntity> foundVehicles = vehicleService.getAllVehicles();
+
+        // Then
+        assertThat(foundVehicles).isEqualTo(vehicles);
+    }
+
+    @Test
+    public void whenGetFormulaValues_thenListOfValues() {
+        // Given
+        // vehicle entity defined earlier
+        List<Long> values = List.of(100L, 101L, 102L, 103L);
+        doReturn(Optional.ofNullable(vehicle)).when(vehicleRepository).findById(Mockito.anyLong());
+        when(repairService.repairNumberDiscount(Mockito.any(VehicleEntity.class), Mockito.anyLong())).thenReturn(100L);
+        when(repairService.bonusDiscount(Mockito.any(VehicleEntity.class), Mockito.anyBoolean())).thenReturn(101L);
+        when(repairService.antiquityRecharge(Mockito.any(VehicleEntity.class), Mockito.anyLong())).thenReturn(102L);
+        when(repairService.mileageRecharge(Mockito.any(VehicleEntity.class), Mockito.anyLong())).thenReturn(103L);
+
+        // When
+        List<Long> foundValues = vehicleService.getFormulaValues(vehicle.getId());
+
+        // Then
+        assertThat(foundValues).containsAll(values);
+    }
+
+    @Test
     public void whenSaveVehicle_thenVehicle() {
         // Given
         // vehicle entity defined earlier
@@ -71,7 +115,7 @@ public class VehicleServiceTest {
         when(vehicleRepository.save(Mockito.any(VehicleEntity.class))).thenReturn(vehicle);
 
         // When
-        VehicleEntity updatedVehicle = vehicleService.saveVehicle(vehicle);
+        VehicleEntity updatedVehicle = vehicleService.updateVehicle(vehicle);
 
         // Then
         assertThat(updatedVehicle).isEqualTo(vehicle);

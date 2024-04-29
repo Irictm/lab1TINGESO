@@ -13,8 +13,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -38,6 +36,19 @@ public class BonusServiceTest {
 
         // When
         BonusEntity foundBonus = bonusService.getBonusById(bonus.getId());
+
+        // Then
+        assertThat(foundBonus).isEqualTo(bonus);
+    }
+
+    @Test
+    public void whenGetBonusByBrand_thenBonus() {
+        // Given
+        // bonus entity defined earlier
+        when(bonusRepository.findByBrand(Mockito.anyString())).thenReturn(bonus);
+
+        // When
+        BonusEntity foundBonus = bonusService.getBonusByBrand(bonus.getBrand());
 
         // Then
         assertThat(foundBonus).isEqualTo(bonus);
@@ -79,5 +90,44 @@ public class BonusServiceTest {
 
         // Then
         assertThat(response).isEqualTo(true);
+    }
+
+    @Test
+    public void whenConsumeBonus_thenReturnBonusValue() throws Exception {
+        // Given
+        // bonus entity defined earlier
+        when(bonusService.getBonusByBrand(Mockito.anyString())).thenReturn(bonus);
+
+        // When
+        Long bonusValue = bonusService.consumeBonus(bonus.getBrand(), false);
+
+        // Then
+        assertThat(bonusValue).isEqualTo(bonus.getAmount());
+    }
+
+    @Test
+    public void whenConsumeBonus_thenReturnBonusValueConsumed() throws Exception {
+        // Given
+        // bonus entity defined earlier
+        when(bonusService.getBonusByBrand(Mockito.anyString())).thenReturn(bonus);
+
+        // When
+        Long bonusValue = bonusService.consumeBonus(bonus.getBrand(), true);
+
+        // Then
+        assertThat(bonusValue).isEqualTo(bonus.getAmount());
+    }
+
+    @Test
+    public void whenConsumeBonus_thenReturnOL() throws Exception {
+        // Given
+        // bonus entity defined earlier
+        when(bonusService.getBonusByBrand(Mockito.anyString())).thenReturn(null);
+
+        // When
+        Long bonusValue = bonusService.consumeBonus(bonus.getBrand(), false);
+
+        // Then
+        assertThat(bonusValue).isEqualTo(0L);
     }
 }

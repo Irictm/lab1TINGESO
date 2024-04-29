@@ -22,7 +22,7 @@ public class VehicleService {
 
     public VehicleEntity getVehicleById(Long id) { return vehicleRepository.findById(id).get(); }
 
-    public List<Long> getFormulaValues(long id) {
+    public List<Long> getFormulaValues(Long id) {
         VehicleEntity vehicle = getVehicleById(id);
         List<Long> values = new ArrayList<>();
         values.add(repairService.repairNumberDiscount(vehicle, 100));
