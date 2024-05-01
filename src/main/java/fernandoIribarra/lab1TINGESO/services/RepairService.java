@@ -60,7 +60,7 @@ public class RepairService {
         else {
             totalCost -= bonusDiscount(vehicle, true);
         }
-        totalCost += Math.round(totalCost * Double.parseDouble(System.getenv("IVA")));
+        totalCost += Math.round(totalCost * Double.parseDouble(System.getProperty("IVA")));
 
         if (totalCost < 0L){ totalCost = 0L;}
 
