@@ -1,5 +1,6 @@
 package fernandoIribarra.lab1TINGESO.services;
 
+import fernandoIribarra.lab1TINGESO.entities.OperationEntity;
 import fernandoIribarra.lab1TINGESO.entities.RepairEntity;
 import fernandoIribarra.lab1TINGESO.entities.VehicleEntity;
 import fernandoIribarra.lab1TINGESO.repositories.RepairRepository;
@@ -36,13 +37,23 @@ public class RepairService {
     public List<RepairEntity> getAllRepairs() { return repairRepository.findAll(); }
 
     public List<Long> getAllRepairsWithOperationType(int typeOp) {
+        OperationEntity opTemp = new OperationEntity(1L, typeOp, 1L);
         List<RepairEntity> repairs = repairRepository.findRepairsWithOperation(typeOp);
-        List<VehicleEntity> vehicles =;
+        List<VehicleEntity> vehicles = new ArrayList<>();
         List<Long> values = new ArrayList<>();
         List<String> seenTypes = new ArrayList<>();
+        Long seenNumber = 0L;
+        Long cost = 0L;
         for (RepairEntity repair : repairs) {
-
+            VehicleEntity vehicle = vehicleService.getVehicleById(repair.getId_vehicle());
+            if (!(seenTypes.contains(vehicle.getType()))) {
+                seenNumber += 1L;
+                seenTypes.add(vehicle.getType());
+                cost += operationService.calculateBaseCost(opTemp, vehicle.getMotorType());
+            }
         }
+        values.add(seenNumber);
+        values.add(cost);
         return values;
     }
 

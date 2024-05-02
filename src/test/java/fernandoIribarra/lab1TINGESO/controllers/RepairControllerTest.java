@@ -56,16 +56,14 @@ public class RepairControllerTest {
 
     @Test
     public void getAllRepairsWithOpType_ShouldReturnRepairs() throws Exception {
-        RepairEntity repair1 = new RepairEntity(null, LocalDateTime.now(), 5L, LocalDateTime.now(), LocalDateTime.now(),1L);
-        RepairEntity repair2 = new RepairEntity(null, LocalDateTime.now(), 6L, LocalDateTime.now(), LocalDateTime.now(),1L);
-        given(repairService.getAllRepairsWithOperationType(Mockito.anyInt())).willReturn(List.of(repair1, repair2));
+        given(repairService.getAllRepairsWithOperationType(Mockito.anyInt())).willReturn(List.of(5L, 4L));
 
         mockMvc.perform(get("/api/v1/repair/operationtype/{typeOp}", 1L))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[0].totalAmount", is(5)))
-                .andExpect(jsonPath("$[1].totalAmount", is(6)));
+                .andExpect(jsonPath("$[0]", is(5)))
+                .andExpect(jsonPath("$[1]", is(4)));
     }
 
     @Test

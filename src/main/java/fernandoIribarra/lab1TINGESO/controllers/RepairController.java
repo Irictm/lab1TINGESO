@@ -36,8 +36,8 @@ public class RepairController {
 
     @GetMapping("/operationtype/{typeOp}")
     public ResponseEntity<List<Long>> getAllRepairsWithOpType(@PathVariable int typeOp) {
-        List<Long> repairs = repairService.getAllRepairsWithOperationType(typeOp);
-        return ResponseEntity.ok(repairs);
+        List<Long> values = repairService.getAllRepairsWithOperationType(typeOp);
+        return ResponseEntity.ok(values);
     }
 
     @GetMapping("/{id}/calculate")

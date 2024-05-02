@@ -1,5 +1,6 @@
 package fernandoIribarra.lab1TINGESO.services;
 
+import fernandoIribarra.lab1TINGESO.entities.OperationEntity;
 import fernandoIribarra.lab1TINGESO.entities.RepairEntity;
 import fernandoIribarra.lab1TINGESO.entities.VehicleEntity;
 import fernandoIribarra.lab1TINGESO.repositories.RepairRepository;
@@ -86,14 +87,26 @@ public class RepairServiceTest {
                 LocalDateTime.now(),
                 LocalDateTime.now(),
                 1L);
+        VehicleEntity vehicle = new VehicleEntity(1L,
+                "09-32-LA",
+                "Toyota",
+                "model1",
+                "SUV",
+                LocalDate.now(),
+                "Diesel",
+                4,
+                4432L);
+
         List<RepairEntity> repairs = List.of(repair, repair1);
         when(repairRepository.findRepairsWithOperation(Mockito.anyInt())).thenReturn(repairs);
+        when(operationService.calculateBaseCost(Mockito.any(OperationEntity.class), Mockito.anyString())).thenReturn(5L);
+        when(vehicleService.getVehicleById(Mockito.anyLong())).thenReturn(vehicle);
 
         // When
-        List<RepairEntity> foundRepairs = repairService.getAllRepairsWithOperationType(1);
+        List<Long> foundValues = repairService.getAllRepairsWithOperationType(1);
 
         // Then
-        assertThat(foundRepairs).isEqualTo(repairs);
+        assertThat(foundValues).hasSize(2);
     }
 
     @Test
