@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -196,6 +197,21 @@ public class RepairService {
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
+    }
+
+    public Long getAvgRepairTimeOfBrand(String brand) {
+        Long average = 0L;
+        Long i = 0L;
+        List<RepairEntity> repairs = repairRepository.findRepairsWithBrand(brand);
+        for (RepairEntity repair: repairs) {
+            Long release = repair.getDateOfRelease().toEpochSecond(ZoneOffset.UTC);
+            Long admission = repair.getDateOfAdmission().toEpochSecond(ZoneOffset.UTC);
+            average += release - admission;
+            i += 1L;
+        }
+        if (i == 0L) { i = 1L;}
+        average = average/i;
+        return average;
     }
 
     public boolean deleteRepair(Long id) throws Exception {

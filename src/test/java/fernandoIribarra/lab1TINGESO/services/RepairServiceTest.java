@@ -603,6 +603,26 @@ public class RepairServiceTest {
     }
 
     @Test
+    public void whenGetAvgRepairTimeOfBrand_thenAvgRepairTime() {
+        // Given
+        // repair entity defined earlier
+        RepairEntity repair1 = new RepairEntity(1L,
+                LocalDateTime.now().minusSeconds(10L),
+                5L,
+                LocalDateTime.now(),
+                LocalDateTime.now(),
+                1L);
+        List<RepairEntity> repairs = List.of(repair, repair1);
+        when(repairRepository.findRepairsWithBrand(Mockito.anyString())).thenReturn(repairs);
+
+        // When
+        Long avgtime = repairService.getAvgRepairTimeOfBrand("Toyota");
+
+        // Then
+        assertThat(avgtime).isEqualTo(5L);
+    }
+
+    @Test
     public void whenDeleteRepair_thenTrue() throws Exception {
         // Given
         // repair entity defined earlier

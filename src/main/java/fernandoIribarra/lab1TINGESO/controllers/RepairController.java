@@ -22,6 +22,12 @@ public class RepairController {
         return ResponseEntity.ok(repair);
     }
 
+    @GetMapping("/avgtime/{brand}")
+    public ResponseEntity<Long> getAvgRepairTimeOfBrand(@PathVariable String brand) {
+        Long avgtime = repairService.getAvgRepairTimeOfBrand(brand);
+        return ResponseEntity.ok(avgtime);
+    }
+
     @GetMapping("/")
     public ResponseEntity<List<RepairEntity>> getAllRepairs() {
         List<RepairEntity> repairs = repairService.getAllRepairs();
