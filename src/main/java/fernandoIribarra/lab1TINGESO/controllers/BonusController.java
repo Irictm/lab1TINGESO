@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("api/v1/bonus")
 @CrossOrigin("*")
@@ -17,6 +19,12 @@ public class BonusController {
     public ResponseEntity<BonusEntity> getBonusById(@PathVariable Long id) {
         BonusEntity bonus = bonusService.getBonusById(id);
         return ResponseEntity.ok(bonus);
+    }
+
+    @GetMapping("/")
+    public ResponseEntity<List<BonusEntity>> getBonusById() {
+        List<BonusEntity> bonuses = bonusService.getAllBonus();
+        return ResponseEntity.ok(bonuses);
     }
 
     @PostMapping("/")

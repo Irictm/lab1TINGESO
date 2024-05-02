@@ -5,6 +5,8 @@ import fernandoIribarra.lab1TINGESO.repositories.BonusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class BonusService {
     @Autowired
@@ -13,6 +15,8 @@ public class BonusService {
     public BonusEntity saveBonus(BonusEntity bonus) { return bonusRepository.save(bonus); }
 
     public BonusEntity getBonusById(Long id) { return bonusRepository.findById(id).get(); }
+
+    public List<BonusEntity> getAllBonus() { return bonusRepository.findAll(); }
 
     public BonusEntity getBonusByBrand(String brand) { return bonusRepository.findByBrand(brand); }
 
