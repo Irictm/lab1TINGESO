@@ -43,6 +43,7 @@ public class RepairService {
 
     public RepairEntity calculateTotalCost(RepairEntity repair) {
         long totalCost = 0L;
+        float IVA = 0.19f;
 
         VehicleEntity vehicle = vehicleService.getVehicleById(repair.getId_vehicle());
         if (vehicle == null) {
@@ -61,7 +62,7 @@ public class RepairService {
         else {
             totalCost -= bonusDiscount(vehicle, true);
         }
-        totalCost += Math.round(totalCost * Double.parseDouble(System.getenv("IVA")));
+        totalCost += Math.round(totalCost * IVA);
 
         if (totalCost < 0L){ totalCost = 0L;}
 
