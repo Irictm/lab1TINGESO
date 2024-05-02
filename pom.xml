@@ -75,6 +75,9 @@
 							<artifactId>lombok</artifactId>
 						</exclude>
 					</excludes>
+					<environmentVariables>
+						<IVA>0.19</IVA>
+					</environmentVariables>
 				</configuration>
 			</plugin>
 			<plugin>
