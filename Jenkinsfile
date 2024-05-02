@@ -19,7 +19,7 @@ pipeline{
         stage("Build and Push Docker Image"){
             steps{
                 script{
-                    withDockerRegistry(credentialsId: 'docker-credentials'){
+                    withDockerRegistry(credentialsId: 'docker-credentials-iri'){
                         bat "docker build -t irictm/lab1-tingeso-backend:latest ."
                         bat "docker push irictm/lab1-tingeso-backend:latest"
                     }
