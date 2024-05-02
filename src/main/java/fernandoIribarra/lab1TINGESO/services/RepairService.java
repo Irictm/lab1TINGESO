@@ -35,8 +35,15 @@ public class RepairService {
 
     public List<RepairEntity> getAllRepairs() { return repairRepository.findAll(); }
 
-    public List<RepairEntity> getAllRepairsWithOperationType(int typeOp) {
-        return repairRepository.findRepairsWithOperation(typeOp);
+    public List<Long> getAllRepairsWithOperationType(int typeOp) {
+        List<RepairEntity> repairs = repairRepository.findRepairsWithOperation(typeOp);
+        List<VehicleEntity> vehicles =;
+        List<Long> values = new ArrayList<>();
+        List<String> seenTypes = new ArrayList<>();
+        for (RepairEntity repair : repairs) {
+
+        }
+        return values;
     }
 
     public RepairEntity updateRepair(RepairEntity repair) { return repairRepository.save(repair);}

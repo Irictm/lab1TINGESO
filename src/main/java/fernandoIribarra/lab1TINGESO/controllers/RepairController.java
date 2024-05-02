@@ -35,8 +35,8 @@ public class RepairController {
     }
 
     @GetMapping("/operationtype/{typeOp}")
-    public ResponseEntity<List<RepairEntity>> getAllRepairsWithOpType(@PathVariable int typeOp) {
-        List<RepairEntity> repairs = repairService.getAllRepairsWithOperationType(typeOp);
+    public ResponseEntity<List<Long>> getAllRepairsWithOpType(@PathVariable int typeOp) {
+        List<Long> repairs = repairService.getAllRepairsWithOperationType(typeOp);
         return ResponseEntity.ok(repairs);
     }
 
